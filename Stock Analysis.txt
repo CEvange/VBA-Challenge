@@ -1,0 +1,121 @@
+Sub Stocks()
+
+Range("I1") = "Ticker"
+Range("J1") = "Yearly Change"
+Range("K1") = "Percent Change"
+Range("L1") = "Total Volume"
+
+
+Dim Ticker As String
+Dim YearlyChange As Double
+Dim PercentChange As Double
+Dim Total As LongLong
+Dim OpenPrice As Double
+Dim ClosePrice As Double
+Dim GInc As Double
+Dim GDec As Double
+Dim GTot As Double
+Dim GIncTicker As String
+Dim GDecTicker As String
+Dim GTotTicker As String
+
+Total = 0
+
+
+Dim SummaryTable As Integer
+SummaryTable = 2
+
+LastRow = Cells(Rows.Count, 1).End(xlUp).Row
+
+
+For i = 2 To LastRow
+
+    If Cells(i, 1).Value = Cells(i + 1, 1).Value And Cells(i - 1, 1).Value <> Cells(i, 1) Then
+    Ticker = Cells(i, 1).Value
+    OpenPrice = Cells(i, 3).Value
+    Total = Total + Cells(i, 7).Value
+   
+    ElseIf Cells(i + 1, 1).Value = Cells(i, 1).Value Then
+    Total = Total + Cells(i, 7).Value
+
+    ElseIf Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+    Total = Total + Cells(i, 7).Value
+    ClosePrice = Cells(i, 6).Value
+    Range("I" & SummaryTable).Value = Ticker
+    Range("L" & SummaryTable).Value = Total
+    YearlyChange = ClosePrice - OpenPrice
+    
+        If OpenPrice = 0 Then
+        PercentChange = 0
+        Else
+        PercentChange = YearlyChange / OpenPrice
+        End If
+    
+    Range("J" & SummaryTable).Value = YearlyChange
+    
+        If YearlyChange < 1 Then
+            Range("J" & SummaryTable).Interior.ColorIndex = 3
+            Else
+            Range("J" & SummaryTable).Interior.ColorIndex = 4
+        End If
+
+    Range("K" & SummaryTable).Value = PercentChange
+    Range("K" & SummaryTable).NumberFormat = "0.00%"
+    
+    SummaryTable = SummaryTable + 1
+    Total = 0
+      
+    End If
+
+Next i
+
+Range("O1") = "Ticker"
+Range("P1") = "Value"
+Range("N2") = "Greatest % Increase"
+Range("N3") = "Greatest % Decrease"
+Range("N4") = "Greatest Total Volume"
+
+GInc = 0
+GDec = 0
+GTot = 0
+
+For j = 2 To LastRow
+    
+    SummaryTable = 2
+    
+    
+    If Cells(j, 11).Value > GInc Then
+    GInc = Cells(j, 11).Value
+    GIncTicker = Cells(j, 9).Value
+    End If
+    
+    
+    If Cells(j, 11).Value < GDec Then
+    GDec = Cells(j, 11).Value
+    GDecTicker = Cells(j, 9).Value
+    End If
+    
+    
+    If Cells(j, 12).Value > GTot Then
+    GTot = Cells(j, 12).Value
+    GTotTicker = Cells(j, 9).Value
+    End If
+    
+
+
+Next j
+
+
+    Cells(2, 16).Value = GInc
+    Cells(2, 16).NumberFormat = "0.00%"
+    Cells(2, 15).Value = GIncTicker
+    
+    Cells(3, 16).Value = GDec
+    Cells(3, 16).NumberFormat = "0.00%"
+    Cells(3, 15).Value = GDecTicker
+    
+    Cells(4, 16).Value = GTot
+    Cells(4, 15).Value = GTotTicker
+    
+
+End Sub
